@@ -403,8 +403,8 @@ contract FunctionsRouter is IFunctionsRouter, FunctionsSubscriptions, Pausable, 
     uint32 callbackGasLimit,
     address client
   ) private returns (CallbackResult memory) {
-    bool destinationNoLongerExists;
     {
+      bool destinationNoLongerExists;
       assembly {
         // solidity calls check that a contract actually exists at the destination, so we do the same
         destinationNoLongerExists := iszero(extcodesize(client))
