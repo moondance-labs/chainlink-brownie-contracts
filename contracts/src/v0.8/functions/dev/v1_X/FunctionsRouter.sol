@@ -404,14 +404,16 @@ contract FunctionsRouter is IFunctionsRouter, FunctionsSubscriptions, Pausable, 
     address client
   ) private returns (CallbackResult memory) {
     bool destinationNoLongerExists;
-    assembly {
-      // solidity calls check that a contract actually exists at the destination, so we do the same
-      destinationNoLongerExists := iszero(extcodesize(client))
-    }
-    if (destinationNoLongerExists) {
-      // Return without attempting callback
-      // The subscription will still be charged to reimburse transmitter's gas overhead
-      return CallbackResult({success: false, gasUsed: 0, returnData: new bytes(0)});
+    {
+      assembly {
+        // solidity calls check that a contract actually exists at the destination, so we do the same
+        destinationNoLongerExists := iszero(extcodesize(client))
+      }
+      if (destinationNoLongerExists) {
+        // Return without attempting callback
+        // The subscription will still be charged to reimburse transmitter's gas overhead
+        return CallbackResult({success: false, gasUsed: 0, returnData: new bytes(0)});
+      }
     }
 
     bytes memory encodedCallback = abi.encodeWithSelector(
